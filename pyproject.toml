@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "finance_tracker"
+version = "0.1.0"
+description = ""
+authors = ["TheCrabilia <ilja.spirts@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pyTelegramBotAPI = "^4.1.0"
+psycopg = "^3.0b1"
+ipykernel = "^6.4.1"
+tabulate = "^0.8.9"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
