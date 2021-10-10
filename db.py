@@ -28,8 +28,8 @@ def get_top(table: str) -> list[tuple[Any]]:
     ...
 
 
-def fetchall(table: str, columns: str = "*", filter: str = "id>0") -> list[tuple[Any]]:
-    cursor.execute(f"SELECT {columns} FROM {table} WHERE {filter}")
+def fetchall(table: str, columns: str = "*", _filter: str = "id>0") -> list[tuple[Any]]:
+    cursor.execute(f"SELECT {columns} FROM {table} WHERE {_filter}")
     return cursor.fetchall()
 
 
