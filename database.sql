@@ -8,7 +8,7 @@ CREATE TABLE expenses (
     creation_timestamp TIMESTAMP DEFAULT NOW(),
     amount FLOAT,
     cat_id INT DEFAULT 1,
-    cat_description VARCHAR DEFAULT '',
+    exp_description VARCHAR DEFAULT '',
     CONSTRAINT fk_expense_categories
         FOREIGN KEY(cat_id)
             REFERENCES expense_categories(id)

@@ -1,10 +1,13 @@
-"""Database module."""
+"""Database main module."""
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from base64 import b64encode, b64decode
+from typing import Union
 
 from psycopg import connect, Connection
+from psycopg.cursor import Cursor
+
+from db.query import DeleteQuery, Query, InsertQuery
 
 
 @dataclass
@@ -30,45 +33,6 @@ class Password:
         return b64decoded.decode("utf-8")
 
 
-class Query(ABC):
-    """Class to store SQL Query data."""
-
-    @abstractmethod
-    def __str__(self) -> str:
-        pass
-
-
-@dataclass
-class SimpleSelectQuery(Query):
-    """This class implemets simple select query."""
-
-    table: str
-    columns: list = None
-
-    def __post_init__(self) -> None:
-        self.query = f"SELECT {self.get_columns()} FROM {self.table}"
-
-    def __str__(self) -> str:
-        return self.query
-
-    def get_columns(self):
-        """Method is used to get columns. Returns '*', if self.columns is None."""
-        if self.columns is None:
-            return "*"
-        return ", ".join(self.columns)
-
-
-@dataclass
-class JoinSelectQuery(Query):
-    """This class implements select query with join statement."""
-
-    table: str
-    columns: list = None
-
-    def __post_init__(self):
-        self.query = f"SELECT * FROM tables "  # TODO end with join select query
-
-
 @dataclass
 class Database:
     """This class implements the interface to interact with SQL database."""
@@ -80,8 +44,8 @@ class Database:
     user: str = "postgres"
 
     def __post_init__(self):
-        self.connection = self.connect()
-        self.cursor = self.connection.cursor()
+        self.connection: Connection = self.connect()
+        self.cursor: Cursor = self.connection.cursor()
 
     def connect(self) -> Connection:
         """This method is used to connect to database. Returns the object of Connection type."""
@@ -93,18 +57,15 @@ class Database:
         """This method is used to disconnect from database."""
         self.connection.close()
 
-    def execute(self, query: Query) -> list:
-        """This method executes the SQL query."""
-        self.cursor.execute(query.__str__())
+    def execute(self, query: Query) -> Union[list, None]:
+        """This method can be used to get data from database."""
+        if isinstance(query, InsertQuery):
+            self.cursor.execute(query.get(), query.values)
+            self.connection.commit()
+            return None
+        if isinstance(query, DeleteQuery):
+            self.cursor.execute(query.get())
+            self.connection.commit()
+            return None
+        self.cursor.execute(query.get())
         return self.cursor.fetchall()
-
-
-database = Database(
-    host="k3s-node-01.home.lab",
-    port=30001,
-    password=Password("123"),
-)
-
-q = SimpleSelectQuery("expense_categories", ["id", "cat_name"])
-print(q)
-print(database.execute(q))
