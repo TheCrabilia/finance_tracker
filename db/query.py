@@ -69,7 +69,10 @@ class SimpleSelectQuery(Query):
 
 @dataclass
 class JoinSelectQuery(Query):
-    """This class implements select query with join statement."""
+    """
+    This class implements select query with join statement.
+    If columns variable is None (not specified), the default value ('*') is used instead.
+    """
 
     tables: tuple[dict[str, str]]
     equation: str
@@ -103,7 +106,8 @@ class InsertQuery(Query):
         self.values = list(self.column_values.values())
 
     def get(self) -> str:
-        placeholders = ", ".join("%s" for _ in range(len(self.column_values.keys())))
+        placeholders = ", ".join("%s" for _ in range(
+            len(self.column_values.keys())))
         return f"INSERT INTO {self.table} ({self.columns}) VALUES ({placeholders})"
 
 

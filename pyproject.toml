@@ -5,15 +5,14 @@ description = ""
 authors = ["TheCrabilia <ilja.spirts@outlook.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-pyTelegramBotAPI = "^4.1.0"
-psycopg = "^3.0b1"
-ipykernel = "^6.4.1"
-tabulate = "^0.8.9"
+python = "^3.10"
+pyTelegramBotAPI = "^4.1.1"
+psycopg = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
 black = {version = "^21.9b0", allow-prereleases = true}
+autopep8 = "^1.5.7"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

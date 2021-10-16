@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from base64 import b64encode, b64decode
-from typing import Union
 
 from psycopg import connect, Connection
 from psycopg.cursor import Cursor
@@ -57,15 +56,17 @@ class Database:
         """This method is used to disconnect from database."""
         self.connection.close()
 
-    def execute(self, query: Query) -> Union[list, None]:
+    def execute(self, query: Query) -> list | None:
         """This method can be used to get data from database."""
-        if isinstance(query, InsertQuery):
-            self.cursor.execute(query.get(), query.values)
-            self.connection.commit()
-            return None
-        if isinstance(query, DeleteQuery):
-            self.cursor.execute(query.get())
-            self.connection.commit()
-            return None
-        self.cursor.execute(query.get())
-        return self.cursor.fetchall()
+        match query:
+            case InsertQuery():
+                self.cursor.execute(query.get(), query.values)
+                self.connection.commit()
+                return None
+            case DeleteQuery():
+                self.cursor.execute(query.get())
+                self.connection.commit()
+                return None
+            case _:
+                self.cursor.execute(query.get())
+                return self.cursor.fetchall()
