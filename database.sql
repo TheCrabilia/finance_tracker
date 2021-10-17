@@ -1,6 +1,6 @@
 CREATE TABLE expense_categories (
     id SERIAL PRIMARY KEY,
-    cat_name VARCHAR
+    cat_name VARCHAR,
 );
 
 CREATE TABLE expenses (

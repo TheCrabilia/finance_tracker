@@ -39,6 +39,19 @@ class Where:
         return f"WHERE {self.expression}"
 
 
+@dataclass
+class Limit:
+    """This class implements SQL LIMIT statement."""
+
+    limit: int | str = None
+
+    def get(self) -> str:
+        """Returns SQL LIMIT statement."""
+        if self.limit is None:
+            return ""
+        return f"LIMIT {self.limit}"
+
+
 class Query(ABC):
     """Class to store SQL Query data."""
 
@@ -53,12 +66,12 @@ class SimpleSelectQuery(Query):
 
     table: str
     columns: tuple[str] = None
-    limit: tuple[str, int] = ()
+    limit: Limit = Limit()
     order: Order = Order()
     where: Where = Where()
 
     def get(self) -> str:
-        return f"SELECT {self.get_columns()} FROM {self.table} {self.where.get()} {self.order.get()} {' '.join(self.limit)}"
+        return f"SELECT {self.get_columns()} FROM {self.table} {self.where.get()} {self.order.get()} {self.limit.get()}"
 
     def get_columns(self):
         """Method is used to get columns. Returns '*', if self.columns is None."""
@@ -77,12 +90,12 @@ class JoinSelectQuery(Query):
     tables: tuple[dict[str, str]]
     equation: str
     columns: tuple[str] = None
-    limit: tuple[str, int] = ()
+    limit: Limit = Limit()
     order: Order = Order()
     where: Where = Where()
 
     def get(self) -> str:
-        return f"SELECT {self.get_columns()} FROM {self.tables[0]['name']} AS {self.tables[0]['alias']} JOIN {self.tables[1]['name']} AS {self.tables[1]['alias']} ON {self.equation} {self.where.get()} {self.order.get()} {' '.join(self.limit)}"
+        return f"SELECT {self.get_columns()} FROM {self.tables[0]['name']} AS {self.tables[0]['alias']} JOIN {self.tables[1]['name']} AS {self.tables[1]['alias']} ON {self.equation} {self.where.get()} {self.order.get()} {self.limit.get()}"
 
     def get_columns(self) -> str:
         """
